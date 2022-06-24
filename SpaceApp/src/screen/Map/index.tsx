@@ -11,31 +11,30 @@ import {Location} from '../../../types';
 
 export default function Map({}: RootTabScreenProps<'Map'>) {
   const locationArray: Location = {
-    latitude: '',
-    longitude: '',
+    latitude: '50.628665',
+    longitude: '3.409834',
   };
   const [data, setData] = useState(locationArray);
-  const [crew, setCrew] = useState([]);
+  const [crew] = useState([
+    {name: 'Sergey Korsakov'},
+    {name: 'Oleg Artemyev'},
+    {name: 'Denis Matveev'},
+    {name: 'Kjell Lindgren'},
+    {name: 'Robert Hines'},
+    {name: 'Jessica Watkins'},
+    {name: 'Samantha Cristoforetti'},
+  ]);
   const [isLoading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch('http://api.open-notify.org/iss-now.json')
+      fetch('https://api.wheretheiss.at/v1/satellites/25544')
         .then(response => response.json())
-        .then(json => setData(json.iss_position))
+        .then(json => setData(json))
         .catch(error => console.error(error))
         .finally(() => setLoading(false));
     }, 1000);
-    fetch('http://api.open-notify.org/astros.json')
-      .then(response => response.json())
-      .then(json =>
-        setCrew(
-          json?.people?.filter((elem: {craft: string}) => elem.craft == 'ISS'),
-        ),
-      )
-      .catch(error => console.error(error));
-
     return () => clearInterval(interval);
   }, []);
 
